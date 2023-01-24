@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  tcgenerator:
+    image: tcgenerator
+    build:
+      context: .
+      dockerfile: ./Dockerfile
