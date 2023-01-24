@@ -12,6 +12,7 @@ services:
       - APACHE_RUN_GROUP=#${UID}
     volumes:
       - .:/var/www/html
+      - ./run/var/php/php.ini:/usr/local/etc/php/php.ini
     ports:
       - 8000:80
     networks:
@@ -22,6 +23,7 @@ services:
   mysql-db:
     image: mysql:5.7
     container_name: mysql-db
+    restart: always
     volumes:
       - ./run/var:/var/lib/mysql
     environment:
@@ -29,11 +31,25 @@ services:
       - MYSQL_DATABASE=db
       - MYSQL_USER=dbuser
       - MYSQL_PASSWORD=secret
+    ports:
+      - "9906:3306"
     networks:
       backend:
         aliases:
           - db
-
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mysql-db
+    environment:
+      PMA_HOST: mysql-db
+      PMA_PORT: 3306
+    ports:
+      - '8080:80'
+    networks:
+      backend:
+        aliases:
+          - phpmyadmin
 networks:
   backend:
     name: backend-network
